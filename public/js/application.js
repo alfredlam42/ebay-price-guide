@@ -3,7 +3,7 @@ $(document).ready(function(){
     event.preventDefault();
 
     var searchResult = {};
-    var data = $(this).serialize()//.split('&');
+    var data = $(this).serialize()
     var searchParam = $('#item').val();
     var status;
 

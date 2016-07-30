@@ -17,17 +17,31 @@
 form {
   display: -webkit-flex;
   display: flex;
+  flex-direction: column;
   width: 50%;
 }
 
-#item {
-  flex: 4;
+#form-line-1 {
+  display: -webkit-flex;
+  display: flex;
 }
 
-#completed {
-  margin-left: 5px;
-  margin-right: 5px;
+#item {
+  width: 80%;
+}
+
+#price {
+  width: 20%;
+}
+
+#form-line-2 {
   font-size: 12px;
+}
+
+#form-line-3 {
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
 }
 
 #submit {

@@ -2,12 +2,19 @@
 
 <div id='search'>
   <form action='/search' method='get'>
-    <input id='item' type='text' name='item' placeholder='Search...'>
-    <div id='completed'>
+    <div id='form-line-1'>
+      <input id='item' type='text' name='item' placeholder='Search...'>
+      <input id='price' type='text' name='retailPrice' placeholder='Retail Price'>
+    </div>
+
+    <div id='form-line-2'>
       <input id='checkbox' type='checkbox' name='completed' value='true' checked>
       Completed
     </div>
-    <button type='submit' id='submit'>Search</button>
+
+    <div id='form-line-3'>
+      <button type='submit' id='submit'>Search</button>
+    </div>
   </form>
 </div>
 
