@@ -1,5 +1,4 @@
 get '/' do
-  p ENV['DEV_ID'];
   erb :'/index'
 end
 
