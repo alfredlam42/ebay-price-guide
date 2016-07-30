@@ -44,7 +44,7 @@ form {
   border-bottom: 1px solid black;
   display: -webkit-flex;
   display: flex;
-  height: 20%;
+  height: 50%;
 }
 
 #item-image {
@@ -62,17 +62,19 @@ form {
   max-height: 90%;
 }
 
-#information{
+#information {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
-  flex: 7;
+  flex: 3;
 }
 
 #item-name{
   font-size: 4.5vh;
 }
 
-#item-low{
-
+#chart {
+  flex: 4;
+  padding-right: 10%;
+  max-height: 100%;
 }

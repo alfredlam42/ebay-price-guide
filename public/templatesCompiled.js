@@ -15,6 +15,6 @@ templates['results'] = template({"compiler":[7,">= 4.0.0"],"main":function(conta
     + alias4(((helper = (helper = helpers.average || (depth0 != null ? depth0.average : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"average","hash":{},"data":data}) : helper)))
     + "</div>\n    <div id='item-high'>High: $"
     + alias4(((helper = (helper = helpers.high || (depth0 != null ? depth0.high : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"high","hash":{},"data":data}) : helper)))
-    + "</div>\n  </div>\n</div>";
+    + "</div>\n  </div>\n  <div id='chart'></div>\n</div>";
 },"useData":true});
 })();

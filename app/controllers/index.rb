@@ -1,4 +1,5 @@
 get '/' do
+  p ENV['DEV_ID'];
   erb :'/index'
 end
 
@@ -14,4 +15,3 @@ get '/search' do
   response = HTTParty.get(path)
   response.to_json
 end
-Contact GitHub API Training Shop Blog About
