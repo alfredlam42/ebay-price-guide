@@ -81,10 +81,7 @@ DEPENDENCIES
   activerecord (~> 4.1)
   activesupport (~> 4.1)
   bcrypt-ruby
-<<<<<<< HEAD
   dotenv
-=======
->>>>>>> 8368f98c46a63c782079c1a059f8b28c5850b5be
   faker
   httparty
   pg
