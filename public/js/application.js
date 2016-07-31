@@ -5,6 +5,7 @@ $(document).ready(function(){
     var searchResult = {};
     var data = $(this).serialize()
     var searchParam = $('#item').val();
+    var retailPrice = $('#price').val();
     var status;
 
     if ($('#checkbox')[0].checked){
@@ -25,9 +26,33 @@ $(document).ready(function(){
       var items = response[Object.keys(response)[0]].searchResult.item;
       var imageURL = items[0].galleryURL;
       var calculations = getCalculations(items);
-      var dataPoints = calculateQuartiles(calculations.prices);
+      var dataPoints = [calculations.lowest, calculations.lowerQuartile, calculations.median, calculations.upperQuartile, calculations.highest];
 
-      var templateData = {name: searchParam, status: status, image: imageURL, low: calculations.lowest, average: calculations.average, high: calculations.highest}
+      var profits = calculateProfits(calculations, retailPrice)
+
+      var templateData = {
+        name: searchParam,
+        status: status,
+        image: imageURL,
+        low: calculations.lowest.toFixed(2),
+        lowProfit: profits.lowest.toFixed(2),
+        lowProfitPercent: profits.lowestPercent,
+        average: calculations.average.toFixed(2),
+        averageProfit: profits.average.toFixed(2),
+        averageProfitPercent: profits.averagePercent,
+        median: calculations.median.toFixed(2),
+        medianProfit: profits.median.toFixed(2),
+        medianProfitPercent: profits.medianPercent,
+        high: calculations.highest.toFixed(2),
+        highProfit: profits.highest.toFixed(2),
+        highProfitPercent: profits.highestPercent,
+        lowerQuartile: calculations.lowerQuartile.toFixed(2),
+        lowerQuartileProfit: profits.lowerQuartile.toFixed(2),
+        lowerQuartileProfitPercent: profits.lowerQuartilePercent,
+        upperQuartile: calculations.upperQuartile.toFixed(2),
+        upperQuartileProfit: profits.upperQuartile.toFixed(2),
+        upperQuartileProfitPercent: profits.upperQuartilePercent,
+      }
       var resultsTemplate = Handlebars.templates.results(templateData);
 
       $('#results').prepend(resultsTemplate);
@@ -45,61 +70,92 @@ $(document).ready(function(){
 
 function getCalculations(items){
   var calculations = {
-    lowest: Infinity,
+    lowest: 0,
     highest: 0,
     average: 0,
+    median: 0,
+    lowerQuartile: 0,
+    upperQuartile: 0,
     prices: []
   };
 
-  items.map(function(item){
-    var price = parseInt(item.sellingStatus.currentPrice.__content__);
+  calculations.prices = getPrices(items);
+  calculations.lowest = calculations.prices[0];
+  calculations.highest = calculations.prices[calculations.prices.length - 1];
+  calculations.average = calculateAverage(calculations.prices);
+  calculations.median = calculateMedian(calculations.prices);
 
-    if (price < calculations.lowest){
-      calculations.lowest = price
-    }
-    if (price > calculations.highest){
-      calculations.highest = price
-    }
-    calculations.prices.push(price);
-  })
-
-  var sum = calculations.prices.reduce(add, 0);
-  calculations.average = sum / calculations.prices.length;
+  if (calculations.prices.length % 2 === 0){
+    calculations.lowerQuartile = calculateMedian(calculations.prices.slice(0, calculations.prices.length / 2));
+    calculations.upperQuartile = calculateMedian(calculations.prices.slice(calculations.prices.length / 2, calculations.prices.length));
+  } else{
+    calculations.lowerQuartile = calculateMedian(calculations.prices.slice(0, Math.floor(calculations.prices.length / 2)));
+    calculations.upperQuartile = calculateMedian(calculations.prices.slice(Math.floor(calculations.prices.length / 2) + 1, calculations.prices.length));
+  }
 
   return calculations;
+}
+
+function getPrices(items){
+  var prices = [];
+
+  items.map(function(item){
+    var price = parseInt(item.sellingStatus.currentPrice.__content__);
+    prices.push(price);
+  });
+
+  prices = prices.sort(function(a,b){return a - b});
+
+  return prices;
+}
+
+function calculateAverage(prices){
+  var sum = prices.reduce(add, 0);
+  return sum / prices.length
 }
 
 function add(a, b){
   return a + b;
 }
 
-function calculateQuartiles(data){
-  //returns an array that contains: lowest value, lower quartile, median, upper quartile, highest value
-  data = data.sort(function(a,b){return a - b});
-
-  var lowest = data[0];
-  var lowerQuartile = 0;
-  var median = findMedian(data);
-  var upperQuartile = 0;
-  var highest = data[data.length - 1];
-
-  if (data.length % 2 === 0){
-    lowerQuartile = findMedian(data.slice(0, data.length / 2));
-    upperQuartile = findMedian(data.slice(data.length / 2, data.length));
-  } else{
-    lowerQuartile = findMedian(data.slice(0, Math.floor(data.length / 2)));
-    upperQuartile = findMedian(data.slice(Math.floor(data.length / 2) + 1, data.length));
+function calculateMedian(prices){
+  if (prices.length % 2 === 0){
+    return (prices[prices.length / 2] + prices[(prices.length / 2) - 1]) / 2;
+  } else {
+    return prices[Math.floor(prices.length / 2)];
   }
-
-  return [lowest, lowerQuartile, median, upperQuartile, highest];
 }
 
-function findMedian(data){
-  if (data.length % 2 === 0){
-    return (data[data.length / 2] + data[(data.length / 2) - 1]) / 2;
-  } else {
-    return data[Math.floor(data.length / 2)];
+function calculateProfits(calculations, retailPrice){
+  var profits = {
+    lowest: 0,
+    lowestPercent: 0,
+    highest: 0,
+    highestPercent: 0,
+    average: 0,
+    averagePercent: 0,
+    median: 0,
+    medianPercent: 0,
+    lowerQuartile: 0,
+    lowerQuartilePercent: 0,
+    upperQuartile: 0,
+    upperQuartilePercent: 0
   }
+
+  profits.lowest = (calculations.lowest * 0.871) - retailPrice;
+  profits.lowestPercent = ((profits.lowest / retailPrice) * 100).toFixed(2);
+  profits.highest = (calculations.highest * 0.871) - retailPrice;
+  profits.highestPercent = ((profits.highest / retailPrice) * 100).toFixed(2);
+  profits.average = (calculations.average * 0.871) - retailPrice;
+  profits.averagePercent = ((profits.average / retailPrice) * 100).toFixed(2);
+  profits.median = (calculations.median * 0.871) - retailPrice;
+  profits.medianPercent = ((profits.median / retailPrice) * 100).toFixed(2);
+  profits.lowerQuartile = (calculations.lowerQuartile * 0.871) - retailPrice;
+  profits.lowerQuartilePercent = ((profits.lowerQuartile / retailPrice) * 100).toFixed(2);
+  profits.upperQuartile = (calculations.upperQuartile * 0.871) - retailPrice;
+  profits.upperQuartilePercent = ((profits.upperQuartile / retailPrice) * 100).toFixed(2);
+
+  return profits;
 }
 
 function addChart(dataPoints, dataLength){

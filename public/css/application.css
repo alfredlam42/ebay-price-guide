@@ -80,15 +80,31 @@ form {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
-  flex: 3;
+  flex: 4;
 }
 
 #item-name{
-  font-size: 4.5vh;
+  font-size: 3vh;
+}
+
+#table {
+  table-layout: fixed;
+}
+
+table th {
+  width: 25%;
+}
+
+td {
+  border: 1px solid black;
+}
+
+.cell {
+  text-align: center;
 }
 
 #chart {
-  flex: 4;
-  padding-right: 10%;
+  flex: 3;
+  padding-right: 5%;
   max-height: 100%;
 }
