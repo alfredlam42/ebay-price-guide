@@ -32,9 +32,6 @@ get '/search' do
     path += '&paginationInput.entriesPerPage=50'
   end
 
-  p '*' * 100
-  p path
-
   response = HTTParty.get(path)
   response.to_json
 end
