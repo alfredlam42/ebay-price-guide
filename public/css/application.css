@@ -36,6 +36,16 @@ form {
 
 #form-line-2 {
   font-size: 12px;
+  display: -webkit-flex;
+  display: flex;
+}
+
+#listing-type {
+  flex: 1;
+}
+
+#complete-listing {
+  flex: 1;
 }
 
 #form-line-3 {

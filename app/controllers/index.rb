@@ -3,6 +3,8 @@ get '/' do
 end
 
 get '/search' do
+  filterCount = 1
+
   item = params[:item].split(' ').join('+')
   #starting path
   path = 'http://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME='
@@ -21,16 +23,20 @@ get '/search' do
   path += '&itemFilter(0).paramValue=USD'
 
   if params[:completed]
-    path += '&itemFilter(1).name=SoldItemsOnly'
-    path += '&itemFilter(1).value=true'
-    path += '&sortOrder=StartTimeNewest'
-    path += '&paginationInput.entriesPerPage=50'
-  else
-    path += '&itemFilter(1).name=ListingType'
-    path += '&itemFilter(1).value=FixedPrice'
-    path += '&sortOrder=PricePlusShippingLowest'
-    path += '&paginationInput.entriesPerPage=50'
+    path += "&itemFilter(#{filterCount}).name=SoldItemsOnly"
+    path += "&itemFilter(#{filterCount}).value=true"
+    filterCount += 1
   end
+
+  if params[:auctionType]
+    path += "&itemFilter(#{filterCount}).name=ListingType"
+    path += "&itemFilter(#{filterCount}).value=#{params[:auctionType]}"
+    filterCount += 1
+  end
+
+  path += params[:completed] ? "&sortOrder=StartTimeNewest" : "&sortOrder=PricePlusShippingLowest"
+
+  path += '&paginationInput.entriesPerPage=50'
 
   response = HTTParty.get(path)
   response.to_json
